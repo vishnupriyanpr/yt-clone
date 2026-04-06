@@ -54,43 +54,33 @@ export default function Upload() {
   }
 
   const uploadToCloudinary = (file, resourceType = 'video') => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const signRes = await api.post('/upload/sign')
-        const signData = signRes.data?.data || signRes.data
+  return new Promise((resolve, reject) => {
+    const fd = new FormData()
+    fd.append('file', file)
+    fd.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET)
+    fd.append('folder', 'yt-clone')
 
-        const fd = new FormData()
-        fd.append('file', file)
-        fd.append('api_key', signData.apiKey)
-        fd.append('timestamp', signData.timestamp)
-        fd.append('signature', signData.signature)
-        fd.append('upload_preset', 'yt_unsigned')
-        fd.append('folder', 'yt-clone')
+    const xhr = new XMLHttpRequest()
+    xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${resourceType}/upload`)
 
-        const xhr = new XMLHttpRequest()
-        xhr.open('POST', `https://api.cloudinary.com/v1_1/${signData.cloudName}/${resourceType}/upload`)
-
-        xhr.upload.onprogress = (e) => {
-          if (e.lengthComputable) {
-            setProgress(Math.round((e.loaded / e.total) * 100))
-          }
-        }
-
-        xhr.onload = () => {
-          if (xhr.status >= 200 && xhr.status < 300) {
-            resolve(JSON.parse(xhr.responseText))
-          } else {
-            reject(new Error('Upload failed'))
-          }
-        }
-
-        xhr.onerror = () => reject(new Error('Upload failed'))
-        xhr.send(fd)
-      } catch (err) {
-        reject(err)
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable) {
+        setProgress(Math.round((e.loaded / e.total) * 100))
       }
-    })
-  }
+    }
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve(JSON.parse(xhr.responseText))
+      } else {
+        reject(new Error(`Upload failed: ${xhr.responseText}`))
+      }
+    }
+
+    xhr.onerror = () => reject(new Error('Upload failed'))
+    xhr.send(fd)
+  })
+}
 
   const validate = () => {
     const e = {}
