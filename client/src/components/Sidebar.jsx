@@ -54,6 +54,18 @@ export default function Sidebar({ isOpen, isMobile, onClose }) {
       <div className="sidebar-divider" />
       <div className="sidebar-section-title">Library</div>
 
+      {/* Watch Later / Library */}
+      <NavLink
+        to="/library"
+        className={({ isActive }) => `sidebar-item${isActive ? ' active' : ''}`}
+        onClick={() => isMobile && onClose()}
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+        </svg>
+        <span className="sidebar-label">Watch Later</span>
+      </NavLink>
+
       {isAuthenticated ? (
         <div className="sidebar-item" onClick={() => handleNav('/upload')} style={{ cursor: 'pointer' }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

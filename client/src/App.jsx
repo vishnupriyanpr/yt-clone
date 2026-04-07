@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
+import { PlayerProvider } from './context/PlayerContext'
 import { ToastProvider } from './components/Toast'
 import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
+import MiniPlayer from './components/MiniPlayer'
 import Home from './pages/Home'
 import Watch from './pages/Watch'
 import Search from './pages/Search'
 import Upload from './pages/Upload'
 import Channel from './pages/Channel'
+import Library from './pages/Library'
 import Login from './pages/Login'
 import Register from './pages/Register'
 
@@ -50,12 +53,15 @@ function AppLayout() {
             <Route path="/search" element={<Search />} />
             <Route path="/upload" element={<ProtectedRoute><Upload /></ProtectedRoute>} />
             <Route path="/channel/:id" element={<Channel />} />
+            <Route path="/library" element={<Library />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
       </div>
+      {/* Mini player — globally available */}
+      <MiniPlayer />
     </BrowserRouter>
   )
 }
@@ -63,9 +69,11 @@ function AppLayout() {
 export default function App() {
   return (
     <AuthProvider>
-      <ToastProvider>
-        <AppLayout />
-      </ToastProvider>
+      <PlayerProvider>
+        <ToastProvider>
+          <AppLayout />
+        </ToastProvider>
+      </PlayerProvider>
     </AuthProvider>
   )
 }

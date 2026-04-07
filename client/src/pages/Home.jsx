@@ -4,7 +4,7 @@ import { SkeletonGrid } from '../components/SkeletonLoader'
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll'
 import api from '../api/axios'
 
-const CATEGORIES = ['All', 'Tech', 'Gaming', 'Music', 'Vlog', 'Education', 'Entertainment']
+const CATEGORIES = ['All', 'Music', 'Gaming', 'Tech', 'Vlog', 'Education', 'Entertainment', 'News', 'Sports', 'Cooking']
 
 export default function Home() {
   const [videos, setVideos] = useState([])
@@ -15,6 +15,7 @@ export default function Home() {
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
   const [initialized, setInitialized] = useState(false)
+  const [gridVisible, setGridVisible] = useState(true)
 
   const fetchVideos = useCallback(async (pageNum, cat, append = false) => {
     if (append) setLoadingMore(true)
@@ -40,15 +41,18 @@ export default function Home() {
     } finally {
       setLoading(false)
       setLoadingMore(false)
+      setGridVisible(true)
     }
   }, [])
 
   useEffect(() => {
+    setGridVisible(false)
     setPage(1)
     setHasMore(true)
     setVideos([])
     setInitialized(false)
-    fetchVideos(1, category, false)
+    const timer = setTimeout(() => fetchVideos(1, category, false), 80)
+    return () => clearTimeout(timer)
   }, [category, fetchVideos])
 
   const loadMore = useCallback(() => {
@@ -78,8 +82,11 @@ export default function Home() {
     <div>
       <div className="chip-row">
         {CATEGORIES.map(cat => (
-          <button key={cat} className={`chip${category === cat ? ' active' : ''}`}
-            onClick={() => handleCategory(cat)}>
+          <button
+            key={cat}
+            className={`chip${category === cat ? ' active' : ''}`}
+            onClick={() => handleCategory(cat)}
+          >
             {cat}
           </button>
         ))}
@@ -95,7 +102,14 @@ export default function Home() {
         </div>
       ) : (
         <>
-          <div className="video-grid stagger-children">
+          <div
+            className="video-grid stagger-children"
+            style={{
+              padding: '24px',
+              opacity: gridVisible ? 1 : 0,
+              transition: 'opacity 0.2s ease',
+            }}
+          >
             {videos.map(video => (
               <VideoCard key={video._id} video={video} />
             ))}
