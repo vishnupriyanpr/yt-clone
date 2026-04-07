@@ -274,3 +274,7 @@ JWT_SECRET=yt_clone_super_secret_key_2024_xyz
 - No TypeScript — intentionally plain JavaScript for simplicity.
 
 ---
+
+## 📜 License
+
+MIT
