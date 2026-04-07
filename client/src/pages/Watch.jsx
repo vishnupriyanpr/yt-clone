@@ -9,6 +9,7 @@ import CommentSection from '../components/CommentSection'
 import Avatar from '../components/Avatar'
 import { formatViews, formatDate } from '../utils/formatTime'
 import { addToWatchLater, removeFromWatchLater, isInWatchLater } from '../utils/watchLater'
+import { WatchPageSkeleton } from '../components/SkeletonLoader'
 
 /* ── Thumbnail dominant color sampler ── */
 function sampleThumbnailColor(url, cb) {
@@ -135,7 +136,7 @@ export default function Watch() {
   }, [isAuthenticated, id, userLiked, showToast])
 
   if (loading) {
-    return <div className="loading-spinner"><div className="spinner" /><span>Loading video...</span></div>
+    return <WatchPageSkeleton />
   }
 
   if (error || !video) {

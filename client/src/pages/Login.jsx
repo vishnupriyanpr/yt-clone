@@ -39,7 +39,7 @@ export default function Login() {
       <div className="auth-card fade-in">
         <div className="auth-logo">
           <svg width="32" height="22" viewBox="0 0 28 20">
-            <rect width="28" height="20" rx="4" fill="#FF0000"/>
+            <rect width="28" height="20" rx="4" fill="#36BCF7"/>
             <polygon points="11,6 11,14 19,10" fill="white"/>
           </svg>
           <span className="auth-logo-text">YTClone</span>

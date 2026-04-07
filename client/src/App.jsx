@@ -6,6 +6,7 @@ import { ToastProvider } from './components/Toast'
 import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
 import MiniPlayer from './components/MiniPlayer'
+import { OrbitalSpinner } from './components/SkeletonLoader'
 import Home from './pages/Home'
 import Watch from './pages/Watch'
 import Search from './pages/Search'
@@ -17,7 +18,7 @@ import Register from './pages/Register'
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated, loading } = useAuth()
-  if (loading) return <div className="loading-spinner"><div className="spinner" /></div>
+  if (loading) return <div className="loading-spinner"><OrbitalSpinner label="Authenticating" /></div>
   if (!isAuthenticated) return <Navigate to="/login" replace />
   return children
 }

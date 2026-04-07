@@ -3,6 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom'
 import api from '../api/axios'
 import Avatar from '../components/Avatar'
 import { formatViews, formatAge } from '../utils/formatTime'
+import { OrbitalSpinner } from '../components/SkeletonLoader'
 
 export default function Search() {
   const [searchParams] = useSearchParams()
@@ -43,8 +44,7 @@ export default function Search() {
 
       {loading && (
         <div className="loading-spinner">
-          <div className="spinner" />
-          <span>Searching...</span>
+          <OrbitalSpinner label="Searching" />
         </div>
       )}
 

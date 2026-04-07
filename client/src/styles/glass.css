@@ -244,7 +244,7 @@
 
 /* ══════════════════════════════════════════════
    PRO UI OVERHAUL — 2025 Component Styles
-   Design: OLED Dark Luxury · Glassmorphism · Red accent
+   Design: OLED Dark Cinema · Glassmorphism · Blue accent
    ══════════════════════════════════════════════ */
 
 /* ── VideoCard 2025 ── */
@@ -352,14 +352,14 @@
 
 /* Progress bar — refined thumb glow */
 .progress-thumb {
-  box-shadow: 0 0 0 3px rgba(255,0,0,0.2), 0 0 8px rgba(255,0,0,0.5) !important;
+  box-shadow: 0 0 0 3px rgba(54,188,247,0.2), 0 0 8px rgba(54,188,247,0.5) !important;
   transition: opacity 0.15s ease, transform 0.15s ease !important;
 }
 .progress-bar-2025:hover .progress-thumb {
   transform: translate(-50%, -50%) scale(1.15);
 }
 .progress-played {
-  background: linear-gradient(90deg, #cc0000, #ff0000) !important;
+  background: linear-gradient(90deg, var(--accent-hover), var(--accent)) !important;
 }
 
 /* ── Like Pill 2025 — refined ── */
@@ -372,8 +372,8 @@
   box-shadow: 0 4px 16px rgba(0,0,0,0.3);
 }
 .like-btn-half.active-like {
-  color: #ff0000;
-  background: rgba(255,0,0,0.08) !important;
+  color: var(--accent);
+  background: rgba(54,188,247,0.08) !important;
 }
 .like-btn-half.active-dislike {
   color: #a0a0ff;
@@ -407,10 +407,10 @@
 
 /* ── Chip active state — refined ── */
 .chip.active {
-  background: var(--text);
-  color: var(--bg);
+  background: var(--accent);
+  color: #000;
   border-color: transparent;
-  box-shadow: 0 2px 12px rgba(255,255,255,0.15);
+  box-shadow: 0 2px 12px rgba(54,188,247,0.25);
   font-weight: 600;
 }
 .chip:not(.active):hover {
@@ -550,16 +550,16 @@
   gap: 16px;
   margin-bottom: 24px;
   padding: 24px;
-  background: linear-gradient(135deg, rgba(255,0,0,0.04) 0%, rgba(255,0,0,0.01) 100%);
-  border: 1px solid rgba(255,0,0,0.08);
+  background: linear-gradient(135deg, rgba(54,188,247,0.04) 0%, rgba(54,188,247,0.01) 100%);
+  border: 1px solid rgba(54,188,247,0.08);
   border-radius: var(--radius-lg);
 }
 .library-hero-icon {
   width: 56px;
   height: 56px;
   border-radius: var(--radius);
-  background: rgba(255,0,0,0.1);
-  border: 1px solid rgba(255,0,0,0.2);
+  background: rgba(54,188,247,0.1);
+  border: 1px solid rgba(54,188,247,0.2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -624,7 +624,7 @@
 
 /* ── Save button active glow ── */
 .save-btn-active {
-  box-shadow: 0 0 0 1px rgba(255,0,0,0.3), 0 4px 16px rgba(255,0,0,0.15) !important;
+  box-shadow: 0 0 0 1px rgba(54,188,247,0.3), 0 4px 16px rgba(54,188,247,0.15) !important;
 }
 
 /* ── Sort dropdown — refined ── */
@@ -650,7 +650,7 @@
 
 /* ── Sidebar item — active accent line ── */
 .sidebar-item.active {
-  background: linear-gradient(90deg, rgba(255,0,0,0.08) 0%, transparent 100%);
+  background: linear-gradient(90deg, rgba(54,188,247,0.08) 0%, transparent 100%);
 }
 
 /* ── Motion — prefers-reduced-motion safety ── */
@@ -667,8 +667,8 @@
   transition: all 0.2s ease !important;
 }
 .hover-accent:hover {
-  background: rgba(255,0,0,0.12) !important;
-  border-color: rgba(255,0,0,0.2) !important;
+  background: rgba(54,188,247,0.12) !important;
+  border-color: rgba(54,188,247,0.2) !important;
   color: var(--text) !important;
 }
 .avatar-active {

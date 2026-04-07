@@ -26,31 +26,91 @@ const ICONS = {
   ),
 }
 
+const TYPE_COLORS = {
+  success: 'var(--success)',
+  error: 'var(--error)',
+  info: 'var(--accent)',
+  warning: 'var(--warning)',
+}
+
 export function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([])
   const counterRef = useRef(0)
 
+  const dismiss = useCallback((id) => {
+    setToasts(prev => prev.map(t => t.id === id ? { ...t, exiting: true } : t))
+    setTimeout(() => {
+      setToasts(prev => prev.filter(t => t.id !== id))
+    }, 350)
+  }, [])
+
   const showToast = useCallback((message, type = 'info', duration = 3200) => {
     const id = ++counterRef.current
-    setToasts(prev => [...prev, { id, message, type, exiting: false }])
-    setTimeout(() => {
-      setToasts(prev => prev.map(t => t.id === id ? { ...t, exiting: true } : t))
-      setTimeout(() => {
-        setToasts(prev => prev.filter(t => t.id !== id))
-      }, 350)
-    }, duration)
-  }, [])
+    setToasts(prev => [...prev, { id, message, type, exiting: false, duration }])
+    setTimeout(() => dismiss(id), duration)
+  }, [dismiss])
 
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <div className="toast-container">
+      <div className="toast-container" role="status" aria-live="polite">
         {toasts.map(t => (
-          <div key={t.id} className={`toast-item toast-item-2025 ${t.type}${t.exiting ? ' exiting' : ''}`}>
-            <span className={`toast-icon toast-icon-${t.type}`}>
+          <div
+            key={t.id}
+            className={`toast-item toast-item-2025 ${t.type}${t.exiting ? ' exiting' : ''}`}
+            style={{
+              animation: t.exiting ? undefined : 'toastSlideInPremium 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+              position: 'relative',
+              overflow: 'hidden',
+            }}
+          >
+            <span
+              className={`toast-icon toast-icon-${t.type}`}
+              style={{
+                background: `color-mix(in srgb, ${TYPE_COLORS[t.type]} 15%, transparent)`,
+                borderRadius: '50%',
+                width: 28,
+                height: 28,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
               {ICONS[t.type] || ICONS.info}
             </span>
             <span className="toast-msg">{t.message}</span>
+            <button
+              onClick={() => dismiss(t.id)}
+              aria-label="Dismiss"
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'var(--muted)',
+                cursor: 'pointer',
+                padding: 4,
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                opacity: 0.5,
+                transition: 'opacity 0.2s',
+                flexShrink: 0,
+              }}
+              onMouseEnter={e => e.currentTarget.style.opacity = '1'}
+              onMouseLeave={e => e.currentTarget.style.opacity = '0.5'}
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+            {/* Progress timer bar */}
+            <div
+              className="toast-progress"
+              style={{
+                '--toast-duration': `${t.duration / 1000}s`,
+                background: TYPE_COLORS[t.type],
+              }}
+            />
           </div>
         ))}
       </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import VideoCard from '../components/VideoCard'
-import { SkeletonGrid } from '../components/SkeletonLoader'
+import { SkeletonGrid, TopLoadBar, OrbitalSpinner } from '../components/SkeletonLoader'
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll'
 import api from '../api/axios'
 
@@ -16,6 +16,8 @@ export default function Home() {
   const [hasMore, setHasMore] = useState(true)
   const [initialized, setInitialized] = useState(false)
   const [gridVisible, setGridVisible] = useState(true)
+  const [showScrollTop, setShowScrollTop] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
 
   const fetchVideos = useCallback(async (pageNum, cat, append = false) => {
     if (append) setLoadingMore(true)
@@ -42,6 +44,7 @@ export default function Home() {
       setLoading(false)
       setLoadingMore(false)
       setGridVisible(true)
+      setRefreshing(false)
     }
   }, [])
 
@@ -54,6 +57,13 @@ export default function Home() {
     const timer = setTimeout(() => fetchVideos(1, category, false), 80)
     return () => clearTimeout(timer)
   }, [category, fetchVideos])
+
+  // Scroll-to-top visibility
+  useEffect(() => {
+    const onScroll = () => setShowScrollTop(window.scrollY > 400)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   const loadMore = useCallback(() => {
     if (loadingMore || !hasMore) return
@@ -69,34 +79,73 @@ export default function Home() {
     setCategory(cat)
   }
 
+  const handleRefresh = () => {
+    if (refreshing) return
+    setRefreshing(true)
+    setPage(1)
+    setHasMore(true)
+    fetchVideos(1, category, false)
+  }
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   if (error && !initialized) {
     return (
-      <div className="error-state">
+      <div className="error-state page-enter">
         <h2>Something went wrong</h2>
         <p>{error}</p>
+        <button className="glass-btn" onClick={() => { setError(''); fetchVideos(1, category) }} style={{ marginTop: 16, gap: 8 }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+          </svg>
+          Try Again
+        </button>
       </div>
     )
   }
 
   return (
-    <div>
+    <div className="page-enter">
+      {/* Top loading bar */}
+      <TopLoadBar visible={loading && !initialized} />
+
+      {/* Category chips */}
       <div className="chip-row">
         {CATEGORIES.map(cat => (
           <button
             key={cat}
             className={`chip${category === cat ? ' active' : ''}`}
             onClick={() => handleCategory(cat)}
+            aria-pressed={category === cat}
           >
             {cat}
           </button>
         ))}
+        {/* Refresh button */}
+        <button
+          className="chip"
+          onClick={handleRefresh}
+          aria-label="Refresh"
+          style={{ marginLeft: 'auto', padding: '6px 12px' }}
+        >
+          <svg
+            width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+            className={refreshing ? 'refresh-spin' : ''}
+            style={{ transition: 'transform 0.3s ease' }}
+          >
+            <polyline points="23 4 23 10 17 10"/>
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+          </svg>
+        </button>
       </div>
 
       {loading && !initialized ? (
-        <SkeletonGrid count={12} />
+        <SkeletonGrid count={16} />
       ) : videos.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-state-icon">🎬</div>
+        <div className="empty-state page-enter">
+          <div className="empty-state-icon empty-float">🎬</div>
           <h2>No videos yet</h2>
           <p>Be the first to upload a video!</p>
         </div>
@@ -105,9 +154,8 @@ export default function Home() {
           <div
             className="video-grid stagger-children"
             style={{
-              padding: '24px',
               opacity: gridVisible ? 1 : 0,
-              transition: 'opacity 0.2s ease',
+              transition: 'opacity 0.3s ease',
             }}
           >
             {videos.map(video => (
@@ -116,13 +164,26 @@ export default function Home() {
           </div>
 
           {loadingMore && (
-            <div className="loading-spinner" style={{ padding: 32 }}>
-              <div className="spinner" />
+            <div style={{ display: 'flex', justifyContent: 'center', padding: 32 }}>
+              <OrbitalSpinner size={40} label="Loading more" />
             </div>
           )}
 
           <div ref={sentinelRef} style={{ height: 1 }} />
         </>
+      )}
+
+      {/* Scroll-to-top button */}
+      {showScrollTop && (
+        <button
+          className="scroll-top-btn"
+          onClick={scrollToTop}
+          aria-label="Scroll to top"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <polyline points="18 15 12 9 6 15"/>
+          </svg>
+        </button>
       )}
     </div>
   )

@@ -6,6 +6,7 @@ import { useToast } from '../components/Toast'
 import VideoCard from '../components/VideoCard'
 import Avatar from '../components/Avatar'
 import { formatViews } from '../utils/formatTime'
+import { OrbitalSpinner } from '../components/SkeletonLoader'
 
 export default function Channel() {
   const { id } = useParams()
@@ -56,7 +57,7 @@ export default function Channel() {
   }
 
   if (loading) {
-    return <div className="loading-spinner"><div className="spinner" /></div>
+    return <div className="loading-spinner"><OrbitalSpinner label="Loading channel" /></div>
   }
 
   if (error || !channel) {
